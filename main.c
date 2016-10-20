@@ -4,7 +4,11 @@
 #include <ctype.h>
 #include <time.h>
 
-#define clear system("clear")
+#ifdef _WIN32
+	#define clear system("cls")
+#else
+	#define clear system("clear")
+#endif
 
 void draw_stickman(char stickman[][22], int miss);
 
