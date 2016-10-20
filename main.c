@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <time.h>
 
+#define clear system("clear")
+
 void draw_stickman(char stickman[][22], int miss);
 
 int main(void)
@@ -44,9 +46,11 @@ int main(void)
 	int players=0;
 	
 	while (menu) {
+		clear;
+	
 		printf("MENU:\n");
 		printf("1 Player\n");
-		printf("2 Player\n");
+		printf("2 Players\n");
 		
 		printf("Players: ");
 		scanf("%d", &players);
@@ -59,31 +63,25 @@ int main(void)
 	
 				int w = rand()%5;
 	
-				//printf("w=%d\n", w);
-	
 				strcpy( secretWord, &words[w][8] );
 			
 				menu = 0;
 			break;
 		
 			case 2:
-				printf("Type word: ");
+				printf("\nType word: ");
 				fgets(secretWord, sizeof(secretWord), stdin);
 				
 				if (secretWord[strlen(secretWord)-1] == '\n') {
 					
 					secretWord[strlen(secretWord)-1] = '\0';
 				}
-				
-				printf("%s", secretWord);
-				
-				getchar();
 			
 				menu = 0;
 			break;
 		
 			default:
-				printf("Choice doesnt exist!\n");
+				printf("\nChoice doesnt exist!\n");
 			
 				getchar();
 				getchar();
@@ -94,9 +92,7 @@ int main(void)
 	while(1) {
 		start:
 		
-		system("clear");
-		
-		//printf("%s\n", secretWord);
+		clear;
 		
 		draw_stickman(stickman, mistakes);
 		
@@ -185,15 +181,11 @@ int main(void)
 		right = 0;
 		
 		for ( int pos=0; pos < strlen(secretWord); ++pos ) {
-			printf("%c == %c?\n", c, secretWord[pos]);
 			if( c == secretWord[pos] ) {
-				printf("True!\n");
 				knownWord[pos] = c;
 				right = 1;
 			}
 		}
-		
-		getchar();
 		
 		if (!right) {
 			printf("Wrong Letter!");
