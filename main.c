@@ -40,7 +40,7 @@ int main(void)
 	
 	char knownWord[20];
 	memset( knownWord, '\0', sizeof(knownWord) );
-
+	
 	char usedLetters[26];
 	memset( usedLetters, '\0', sizeof(usedLetters) );
 	
@@ -57,7 +57,7 @@ int main(void)
 	
 	while (menu) {
 		clear;
-	
+		
 		printf("MENU:\n");
 		printf("1 Player\n");
 		printf("2 Players\n");
@@ -65,7 +65,7 @@ int main(void)
 		printf("Players: ");
 		scanf("%d", &players);
 		getchar();
-	
+		
 		switch (players) {
 	
 			case 1:
@@ -83,10 +83,8 @@ int main(void)
 				printf("\nType word: ");
 				fgets(secretWord, sizeof(secretWord), stdin);
 				
-				if (secretWord[strlen(secretWord)-1] == '\n') {
-					
+				if (secretWord[strlen(secretWord)-1] == '\n')
 					secretWord[strlen(secretWord)-1] = '\0';
-				}
 			
 				play=1;
 				menu = 0;
@@ -101,13 +99,13 @@ int main(void)
 		
 		while(play) {
 			start:
-		
+			
 			clear;
-		
+			
 			draw_stickman(stickman, mistakes);
-		
+			
 			printf("\n\t");
-		
+			
 			for (int i=0; i < strlen(secretWord); ++i) {
 				if (knownWord[i] == '\0') {
 					putchar('_');
@@ -115,7 +113,7 @@ int main(void)
 					printf( "%c", knownWord[i] );
 				}
 			}
-		
+			
 			putchar('\n');
 			putchar('\n');
 			
@@ -136,8 +134,8 @@ int main(void)
 			}
 			putchar('\n');
 			putchar('\n');
-		
-		
+			
+			
 			if (mistakes == 6) {
 				printf("Game Over...\n");
 				printf("The word was: %s\n", secretWord);
@@ -179,7 +177,7 @@ int main(void)
 				if (c == 's') {
 					mistakes = 0;
 					tries = 0;
-				
+					
 					/* Reset stickman */
 					stickman[2][10] = ' ';
 					stickman[3][10] = ' ';
@@ -192,7 +190,7 @@ int main(void)
 					memset( secretWord, '\0', sizeof(secretWord) );
 					memset( knownWord, '\0', sizeof(knownWord) );
 					memset( usedLetters, '\0', sizeof(usedLetters) );
-				
+					
 					menu=1;
 					play=0;
 					break;
@@ -201,11 +199,11 @@ int main(void)
 					break;
 				}
 			}
-		
+			
 			printf("Type a letter: ");
 			scanf("%c", &c);
 			getchar();
-		
+			
 			if ( !isalpha(c) ) {
 				printf("Use only a-z(A-z)");
 			
@@ -213,31 +211,32 @@ int main(void)
 			
 				continue;
 			}
-		
+			
 			c = tolower(c);
-		
+			
 			for ( int i=0; i < 26; ++i) {
 				if ( usedLetters[i] == c ) {
 					printf("Already guessed that letter!");
 				
 					getchar();
 				
-					goto start;
+					goto start;		// Should find a way to remove this
 				}
 			}
-		
+			
 			usedLetters[tries] = c;
 			++tries;
-		
+			
 			right = 0;
-		
+			
+			/* Check for mistakes */
 			for ( int pos=0; pos < strlen(secretWord); ++pos ) {
 				if( c == secretWord[pos] ) {
 					knownWord[pos] = c;
 					right = 1;
 				}
 			}
-		
+			
 			if (!right) {
 				printf("Wrong Letter!");
 			
@@ -253,6 +252,7 @@ int main(void)
 
 void draw_stickman(char stickman[][22], int mistakes)
 {
+	/* Add parts to the stickman */
 	switch(mistakes) {
 		case 1:
 			stickman[2][10] = 'O';
@@ -279,6 +279,7 @@ void draw_stickman(char stickman[][22], int mistakes)
 		break;
 	}
 	
+	/* Actually draw the picture */
 	for (int i=0; i<7; ++i) {
 		for (int j=0; j<22; ++j) {
 			putchar(stickman[i][j]);
