@@ -23,6 +23,9 @@ int main(void)
 				{ "   |                "  },
 				{ "--------------------"  }	
 	};
+	
+	/* Should make the program read theses
+	   from a file */
 	char words[][8] = {
 		"green",
 		"yellow",
@@ -46,7 +49,10 @@ int main(void)
 	int tries=0;
 	char c;
 	
+	int inWord;
+	
 	int menu=1;
+	int play=0;
 	int players=0;
 	
 	while (menu) {
@@ -69,6 +75,7 @@ int main(void)
 	
 				strcpy( secretWord, &words[w][8] );
 			
+				play=1;
 				menu = 0;
 			break;
 		
@@ -81,122 +88,163 @@ int main(void)
 					secretWord[strlen(secretWord)-1] = '\0';
 				}
 			
+				play=1;
 				menu = 0;
 			break;
 		
 			default:
-				printf("\nChoice doesnt exist!\n");
+				printf("\nChoice doesnt exist!");
 			
-				getchar();
 				getchar();
 			break;
 		}
-	}
-	
-	while(1) {
-		start:
 		
-		clear;
+		while(play) {
+			start:
 		
-		draw_stickman(stickman, mistakes);
+			clear;
 		
-		printf("\n\t");
+			draw_stickman(stickman, mistakes);
 		
-		for (int i=0; i < strlen(secretWord); ++i) {
-			if (knownWord[i] == '\0') {
-				putchar('_');
-			} else {
-				printf( "%c", knownWord[i] );
+			printf("\n\t");
+		
+			for (int i=0; i < strlen(secretWord); ++i) {
+				if (knownWord[i] == '\0') {
+					putchar('_');
+				} else {
+					printf( "%c", knownWord[i] );
+				}
 			}
-		}
 		
-		putchar('\n');
-		putchar('\n');
-		
-		printf("Used Letters:\n\t");
-		for (int i=0; i < strlen(usedLetters); ++i ) {
-			if (usedLetters[i] != '\0') {
-				printf("%c ", usedLetters[i]);
+			putchar('\n');
+			putchar('\n');
+			
+			printf("Used Letters:\n\t");
+			for (int i=0; ( i < strlen(usedLetters) ) && (usedLetters[i] != '\0'); ++i ) {
+				inWord = 0;
+				
+				for (int j=0; j < sizeof(knownWord); ++j) {
+					if (usedLetters[i] == knownWord[j]) {
+						inWord = 1;
+						break;
+					}
+				}
+				
+				if (!inWord) {
+					printf("%c ", usedLetters[i]);
+				}
 			}
-		}
-		putchar('\n');
-		putchar('\n');
+			putchar('\n');
+			putchar('\n');
 		
 		
-		if (mistakes == 6) {
-			printf("Game Over...\n\n");
-			printf("Continue?(s/n) ");
+			if (mistakes == 6) {
+				printf("Game Over...\n");
+				printf("The word was: %s\n", secretWord);
+				printf("Continue?(s/n) ");
+				scanf("%c", &c);
+				getchar();
+			
+				if (c == 's') {
+					mistakes = 0;
+					tries = 0;
+				
+					/* Reset stickman */
+					stickman[2][10] = ' ';			
+					stickman[3][10] = ' ';
+					stickman[3][ 9] = ' ';
+					stickman[3][11] = ' ';
+					stickman[4][ 9] = ' ';
+					stickman[4][11] = ' ';
+					
+					/* Reset variables */
+					memset( secretWord, '\0', sizeof(secretWord) );
+					memset( knownWord, '\0', sizeof(knownWord) );
+					memset( usedLetters, '\0', sizeof(usedLetters) );
+				
+					menu=1;
+					play=0;
+					break;
+				} else {
+					clear;
+					break;
+				}
+			} else if ( strcmp(secretWord, knownWord) == 0 ) {
+				printf("\nWon the game!\n");
+				
+				printf("\nContinue?(s/n) ");
+				scanf("%c", &c);
+				getchar();
+			
+				if (c == 's') {
+					mistakes = 0;
+					tries = 0;
+				
+					/* Reset stickman */
+					stickman[2][10] = ' ';
+					stickman[3][10] = ' ';
+					stickman[3][ 9] = ' ';
+					stickman[3][11] = ' ';
+					stickman[4][ 9] = ' ';
+					stickman[4][11] = ' ';
+					
+					/* Reset variables */
+					memset( secretWord, '\0', sizeof(secretWord) );
+					memset( knownWord, '\0', sizeof(knownWord) );
+					memset( usedLetters, '\0', sizeof(usedLetters) );
+				
+					menu=1;
+					play=0;
+					break;
+				} else {
+					clear;
+					break;
+				}
+			}
+		
+			printf("Type a letter: ");
 			scanf("%c", &c);
 			getchar();
-			
-			if (c == 's') {
-				mistakes = 0;
-				
-				/* Reset stickman */
-				stickman[2][10] = ' ';			
-				stickman[3][10] = ' ';
-				stickman[3][ 9] = ' ';
-				stickman[3][11] = ' ';
-				stickman[4][ 9] = ' ';
-				stickman[4][11] = ' ';
-				
-				continue;	// ignore the rest and start over
-			} else {
-				system("clear");
-				break;
-			}
-		} else if ( strcmp(secretWord, knownWord) == 0 ) {
-			printf("\nWon the game!");
-			
-			getchar();
-			
-			system("clear");
-			
-			break;
-		}
 		
-		printf("Type a letter: ");
-		scanf("%c", &c);
-		getchar();
-		
-		if ( !isalpha(c) ) {
-			printf("Use only a-z(A-z)");
+			if ( !isalpha(c) ) {
+				printf("Use only a-z(A-z)");
 			
-			getchar();
-			
-			continue;
-		}
-		
-		c = tolower(c);
-		
-		for ( int i=0; i < 26; ++i) {
-			if ( usedLetters[i] == c ) {
-				printf("Already guessed that letter!");
-				
 				getchar();
+			
+				continue;
+			}
+		
+			c = tolower(c);
+		
+			for ( int i=0; i < 26; ++i) {
+				if ( usedLetters[i] == c ) {
+					printf("Already guessed that letter!");
 				
-				goto start;
+					getchar();
+				
+					goto start;
+				}
 			}
-		}
 		
-		usedLetters[tries] = c;
-		++tries;
+			usedLetters[tries] = c;
+			++tries;
 		
-		right = 0;
+			right = 0;
 		
-		for ( int pos=0; pos < strlen(secretWord); ++pos ) {
-			if( c == secretWord[pos] ) {
-				knownWord[pos] = c;
-				right = 1;
+			for ( int pos=0; pos < strlen(secretWord); ++pos ) {
+				if( c == secretWord[pos] ) {
+					knownWord[pos] = c;
+					right = 1;
+				}
 			}
-		}
 		
-		if (!right) {
-			printf("Wrong Letter!");
+			if (!right) {
+				printf("Wrong Letter!");
 			
-			mistakes++;	
+				mistakes++;	
 			
-			getchar();
+				getchar();
+			}
 		}
 	}
 
