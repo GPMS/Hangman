@@ -1,2 +1,2 @@
 # Hangman
-Hangman using C.
+A simple Hangman game using C.
