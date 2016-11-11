@@ -20,6 +20,7 @@ typedef struct{
 } Game;
 
 void draw_stickman(Game *game);
+void reset_game(Game *game);
 
 int main(void)
 {	
@@ -51,18 +52,7 @@ int main(void)
 		"apple"
 	};
 	
-	//char secretWord[20];
-	memset( game.secretWord, '\0', sizeof(game.secretWord) );
-	
-	//char knownWord[20];
-	memset( game.knownWord, '\0', sizeof(game.knownWord) );
-	
-	//char usedLetters[26];
-	memset( game.usedLetters, '\0', sizeof(game.usedLetters) );
-	
-	int mistakes=0;
 	int right;
-	int tries=0;
 	char c;
 	
 	int inWord;
@@ -152,27 +142,15 @@ int main(void)
 			putchar('\n');
 			
 			
-			if (mistakes == 6) {
+			if (game.mistakes == 6) {
 				printf("Game Over...\n");
 				printf("The word was: %s\n", game.secretWord);
-				printf("Continue?(s/n) ");
+				printf("Continue?(y/n) ");
 				scanf("%c", &c);
 				getchar();
 			
-				if (c == 's') {
-					mistakes = 0;
-					tries = 0;
-					
-					game.stickman[2][10] = ' ';			
-					game.stickman[3][10] = ' ';
-					game.stickman[3][ 9] = ' ';
-					game.stickman[3][11] = ' ';
-					game.stickman[4][ 9] = ' ';
-					game.stickman[4][11] = ' ';
-					
-					memset( game.secretWord, '\0', sizeof(game.secretWord) );
-					memset( game.knownWord, '\0', sizeof(game.knownWord) );
-					memset( game.usedLetters, '\0', sizeof(game.usedLetters) );
+				if (c == 'y') {
+					reset_game(&game);
 					
 					menu=1;
 					play=0;
@@ -184,24 +162,12 @@ int main(void)
 			} else if ( strcmp(game.secretWord, game.knownWord) == 0 ) {
 				printf("\nWon the game!\n");
 				
-				printf("\nContinue?(s/n) ");
+				printf("\nContinue?(y/n) ");
 				scanf("%c", &c);
 				getchar();
 			
-				if (c == 's') {
-					mistakes = 0;
-					tries = 0;
-					
-					game.stickman[2][10] = ' ';
-					game.stickman[3][10] = ' ';
-					game.stickman[3][ 9] = ' ';
-					game.stickman[3][11] = ' ';
-					game.stickman[4][ 9] = ' ';
-					game.stickman[4][11] = ' ';
-					
-					memset( game.secretWord, '\0', sizeof(game.secretWord) );
-					memset( game.knownWord, '\0', sizeof(game.knownWord) );
-					memset( game.usedLetters, '\0', sizeof(game.usedLetters) );
+				if (c == 'y') {
+					reset_game(&game);
 					
 					menu=1;
 					play=0;
@@ -236,8 +202,8 @@ int main(void)
 				}
 			}
 			
-			game.usedLetters[tries] = c;
-			++tries;
+			game.usedLetters[game.tries] = c;
+			++game.tries;
 			
 			right = 0;
 			
@@ -252,7 +218,7 @@ int main(void)
 			if (!right) {
 				printf("Wrong Letter!");
 			
-				mistakes++;	
+				game.mistakes++;	
 			
 				getchar();
 			}
@@ -302,5 +268,19 @@ void draw_stickman(Game *game)
 
 void reset_game(Game *game)
 {
+	game->mistakes = 0;
+	game->tries = 0;
 
+	game->stickman[2][10] = ' ';			
+	game->stickman[3][10] = ' ';
+	game->stickman[3][ 9] = ' ';
+	game->stickman[3][11] = ' ';
+	game->stickman[4][ 9] = ' ';
+	game->stickman[4][11] = ' ';
+
+	memset( game->secretWord, '\0', sizeof(game->secretWord) );
+	memset( game->knownWord, '\0', sizeof(game->knownWord) );
+	memset( game->usedLetters, '\0', sizeof(game->usedLetters) );
 }
+
+
